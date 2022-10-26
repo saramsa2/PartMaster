@@ -10,14 +10,14 @@
 <body>
         <div class="container"><div class="row">
             <div class="col-10"></div>
-            <div class="col-2 justify-content-center">
-                <img src="images/sign_in.jpg" style="width: 50px; height: 50px;"><br>
-                <a href="https://partmaster.auth.us-west-2.amazoncognito.com/login?client_id=7getad3g1bktoe2gjh2v9ta585&response_type=code&scope=email+openid&redirect_uri=http://localhost:8000/signin.html">Sign in</a>
+            <div class="col-2 justify-content-center">            
+                <a href="https://partmaster.auth.us-west-2.amazoncognito.com/login?client_id=7getad3g1bktoe2gjh2v9ta585&response_type=code&scope=email+openid&redirect_uri=http://localhost:8000/signin.html">
+                    <img src="images/sign_in.jpg" style="width: 50px; height: 50px;"><br>Sign in</a>
             </div>
         </div></div>
         
 
-    <nav class="nav nav-pills justify-content-center" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
+    <nav class="nav nav-pills justify-content-center" id="v-pills-tab" role="tablist" aria-orientation="horizontal" style="background-color: #e3f2fd; padding: 5px;">
 
         <a class="nav-link col col-lg-1 active" id="v-pills-home-tab" data-toggle="pill" href="#home-tab"
            role="tab" aria-controls="v-pills-home" aria-selected="true">Home</a>
@@ -31,12 +31,35 @@
 
 <div class="tab-content flex" id="v-pills-tabContent">
     <div class="tab-pane fade show active just" id="home-tab" role="tabpanel" aria-labelledby="v-pills-home-tab">
-        Landing page
         <iframe src="landing.html" style="width: 100%; height:600px;"></iframe>
     </div>
 
     <div class="tab-pane fade" id="product-guest-tab" role="tabpanel" aria-labelledby="v-pills-profile-tab">
-        Product List
+        <p id="test_id"></p>
+        <script type="text/javascript">
+            var apiUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/26-10-2022_v01/parts';
+            fetch(apiUrl).then(response => {
+              return response.json();
+            }).then(data => {
+              // Work with JSON data here
+                  
+                    var out ="<table class='table'><tr><th>Part ID</th><th>Name</th><th>Description</th><th>Price</th></tr>";
+                    for(var i=0; i<data.length; i++) {                  
+                      out += "<tr>";
+                      out += "<td>" + data[i]["PartID"] + "</td>";
+                      out += "<td>" + data[i]["PartName"] + "</td>";
+                      out += "<td>" + data[i]["Description"] + "</td>";
+                      out += "<td>" + data[i]["UnitPrice"] + "</td>";
+                      out += "</tr>";
+                    }
+                    out += "</table>";
+              document.getElementById("test_id").innerHTML = out;
+              console.log(data);
+    
+            }).catch(err => {
+              // Do something for an error here
+            });
+        </script>
     </div>
     
     <div class="tab-pane fade" id="concact-tab" role="tabpanel" aria-labelledby="v-pills-profile-tab">

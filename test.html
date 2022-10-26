@@ -9,8 +9,9 @@
           integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 </head>
 <body>
-    <p id="test_id"></p>
-
+    <input type="button" onclick="buyitems" value="Order Now">
+    <p id="test_id"></p>    
+    
 
     <script type="text/javascript">
         var apiUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/26-10-2022_v01/parts';
@@ -18,12 +19,19 @@
           return response.json();
         }).then(data => {
           // Work with JSON data here
-                var out ="<table><tr><th>Part ID</th>";
-                for(var list in data) {
-                    
+              
+                var out ="<table class='table'><tr><th>Part ID</th><th>Name</th><th>Description</th><th>Price</th><th>Quantity</th></tr>";
+                for(var i=0; i<data.length; i++) {                  
+                  out += "<tr>";
+                  out += "<td>" + data[i]["PartID"] + "</td>";
+                  out += "<td>" + data[i]["PartName"] + "</td>";
+                  out += "<td>" + data[i]["Description"] + "</td>";
+                  out += "<td>" + data[i]["UnitPrice"] + "</td>";
+                  out += "<td><input type='number' value='0' id='qty"+data[i]["PartID"] +"'></td>";                  
+                  out += "</tr>";
                 }
                 out += "</table>";
-          document.getElementById("test_id").innerHTML = data;
+          document.getElementById("test_id").innerHTML = out;
           console.log(data);
 
         }).catch(err => {
@@ -31,38 +39,5 @@
         });
     </script>
 
-    <script>
-        // const userAction = async () => {
-        //     const response = await fetch('http://example.com/movies.json');
-        //     const myJson = await response.json(); //extract JSON from the http response
-        //     // do something with myJson
-        //     debugger;
-        //     document.getElementById("test_id").innerHTML = myJson;
-        //     }
-
-        // var xmlhttp = new XMLHttpRequest();
-        // var url = "https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/26-10-2022_v01/parts"
-        
-
-
-        // xmlhttp.open('GET',url,true);
-        // xmlhttp.send();
-        // function myFunction(arr){
-        //     var out = "<ul>";
-        //     var i;
-        //     for(i=0; i < arr.length;i++){
-        //         out += '<li>' + arr[i].name + ' '+arr[i].lastName+'<li>';}
-        //     out += "</ul>";
-        //     document.getElementById("test_id").innerHTML = arr;
-        // }
-
-        // xmlhttp.onreadystatechange = function(){
-        //     debugger
-        //     if(this.readyState == 4 && this.status == 200){
-        //         var myArr = JSON.parse(this.responseText);
-        //         myFunction(myArr);
-        //     }
-        // }
-    </script>
 </body>
 </html>

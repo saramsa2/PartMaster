@@ -16,28 +16,101 @@
         </div>
     </div>
     
-    <table class="table">
-        <tr>
-            <td>Part ID</td>
-            <td>Part Name</td>
-            <td>Description</td>
-            <td>Supplier</td>
-            <td>Quantity</td>
-            <td>Unit Price</td>
-            <td>Min. Order</td>
-            <td>Order Qty.</td>           
-        </tr>
-    </table>
+    <table class="table" id="stock_table"></table>
+
+    <script type="text/javascript">
+        const apiUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/28-OCT-2022/parts';
+        var table = document.getElementById("stock_table");
+        fetch(apiUrl).then(response => {
+            return response.json();
+        }).then(data => {
+            for(var i=0; i<data.length; i++) {
+                var row = table.insertRow(i);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+                var cell5 = row.insertCell(4);
+                var cell6 = row.insertCell(5);
+                var cell7 = row.insertCell(6);
+                var cell8 = row.insertCell(7);
+                var cell9 = row.insertCell(8);
+                var cell10 = row.insertCell(9);
+
+                cell1.innerHTML = data[i]["PartID"];
+                cell2.innerHTML = data[i]["PartName"];
+                cell3.innerHTML = data[i]["Description"];
+                cell4.innerHTML = data[i]["Supplier"];
+                cell5.innerHTML = data[i]["Quantity"];
+                cell6.innerHTML = data[i]["UnitPrice"];
+                cell7.innerHTML = data[i]["MinimumQty"];
+                cell8.innerHTML = data[i]["OrderQty"];
+                
+                var buttonUpdate = document.createElement("button");
+                cname = "btUpdate" + data[i]["PartID"];
+                buttonUpdate.setAttribute("id", cname);                   
+                var update_url = "newpart.html?data=" + data[i]["PartID"];                
+                buttonUpdate.setAttribute("value", update_url);                   
+                buttonUpdate.innerHTML = "Update";
+                buttonUpdate.addEventListener("click", function() {updatePart(this.value)});
+                cell9.appendChild(buttonUpdate);
+                
+                var buttonDelete = document.createElement("button");
+                cname = "btDelete" + data[i]["PartID"];
+                buttonUpdate.setAttribute("id", cname);                   
+                var DeletePartId = data[i]["PartID"];                
+                buttonDelete.setAttribute("value", DeletePartId);
+                buttonDelete.innerHTML = "Delete";
+                buttonDelete.addEventListener("click", function() {deletePart(this.value)});
+                cell9.appendChild(buttonDelete);
+            }
+            var row = table.insertRow(0);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+            var cell6 = row.insertCell(5);
+            var cell7 = row.insertCell(6);
+            var cell8 = row.insertCell(7);
+            cell1.innerHTML = "Part ID";
+            cell2.innerHTML = "Part Name";
+            cell3.innerHTML = "Description";
+            cell4.innerHTML = "Supplier";
+            cell5.innerHTML = "Quantity";
+            cell6.innerHTML = "UnitPrice";
+            cell7.innerHTML = "MinimumQty";
+            cell8.innerHTML = "OrderQty";
+
+            
+
+        }).catch(err => {
+            // Do something for an error here
+        });
+
+        function updatePart(my_url) {
+            window.location.href = my_url;
+        }
+
+        function deletePart(part_id) {
+            debugger;
+            deleteUrl = apiUrl+"/"+part_id;            
+            fetch(deleteUrl, { method: 'DELETE' })
+            .then(response => alert("deleted"))
+            .catch(err => alert(err));
+            window.location.reload();
+        }
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-crossorigin="anonymous"></script>
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
-integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
 
 
 </body>

@@ -11,7 +11,7 @@
         <div class="container"><div class="row">
             <div class="col-10"></div>
             <div class="col-2 justify-content-center">            
-                <a href="https://partmaster.auth.us-west-2.amazoncognito.com/login?client_id=7getad3g1bktoe2gjh2v9ta585&response_type=code&scope=email+openid&redirect_uri=http://localhost:8000/signin.html">
+                <a href="https://partmaster.auth.us-west-2.amazoncognito.com/login?client_id=7getad3g1bktoe2gjh2v9ta585&response_type=code&scope=email+openid&redirect_uri=http://localhost:8000/admin.html">
                     <img src="images/sign_in.jpg" style="width: 50px; height: 50px;"><br>Sign in</a>
             </div>
         </div></div>
@@ -19,13 +19,13 @@
 
     <nav class="nav nav-pills justify-content-center" id="v-pills-tab" role="tablist" aria-orientation="horizontal" style="background-color: #e3f2fd; padding: 5px;">
 
-        <a class="nav-link col col-lg-1 active" id="v-pills-home-tab" data-toggle="pill" href="#home-tab"
+        <a class="nav-link col col-lg-2 active" id="v-pills-home-tab" data-toggle="pill" href="#home-tab"
            role="tab" aria-controls="v-pills-home" aria-selected="true">Home</a>
     
-        <a class="nav-link col col-lg-1" id="v-pills-profile-tab" data-toggle="pill" href="#product-guest-tab"
+        <a class="nav-link col col-lg-2" id="v-pills-profile-tab" data-toggle="pill" href="#product-guest-tab"
            role="tab" aria-controls="v-pills-profile" aria-selected="false">Product</a>
 
-        <a class="nav-link col col-lg-1" id="v-pills-profile-tab" data-toggle="pill" href="#concact-tab"
+        <a class="nav-link col col-lg-2" id="v-pills-profile-tab" data-toggle="pill" href="#concact-tab"
            role="tab" aria-controls="v-pills-profile" aria-selected="false">Contact Us</a>
     </nav>
 
@@ -41,9 +41,8 @@
             fetch(apiUrl).then(response => {
               return response.json();
             }).then(data => {
-              // Work with JSON data here
                   
-                    var out ="<table class='table'><tr><th>Part ID</th><th>Name</th><th>Description</th><th>Price</th></tr>";
+                    var out ="<table class='table'><tr><th>Part ID</th><th>Name</th><th>Description</th><th>Price($)</th></tr>";
                     for(var i=0; i<data.length; i++) {                  
                       out += "<tr>";
                       out += "<td>" + data[i]["PartID"] + "</td>";

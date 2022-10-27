@@ -60,9 +60,67 @@
             <div class="col-2"></div>
         </div>        
     </div>
-    
 
-    </table>
+    <script>        
+        const apiUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/28-OCT-2022/parts';
+        var search = window.location.search;
+
+        var PartId = document.getElementById("part_id");
+        var PartName = document.getElementById("part_name");
+        var Description = document.getElementById("part_description");
+        var Supplier = document.getElementById("supplier");
+        var Quantity = document.getElementById("quantity");
+        var UnitPrice = document.getElementById("unit_price");
+        var MinQty = document.getElementById("min_qty");
+        var OrderQty = document.getElementById("order_qty");
+
+        
+    
+        fetch(apiUrl).then(response => {
+            return response.json();
+        }).then(data => {
+            debugger
+            if(search != ""){
+                // update
+                debugger
+                const URLSearch = new URLSearchParams(location.search);            
+                var updatePartId = URLSearch.get('data');
+                PartId.value =  updatePartId;
+                for(var i=0; i<data.length; i++) {
+                    if(updatePartId == data[i]["PartID"]) {
+                        PartName.value = data[i]["PartName"];
+                        Description.value = data[i]["Description"];
+                        Supplier.value = data[i]["Supplier"];
+                        Quantity.value = data[i]["Quantity"];
+                        UnitPrice.value = data[i]["UnitPrice"];
+                        MinQty.value = data[i]["MinimumQty"];
+                        OrderQty.value = data[i]["OrderQty"]
+                    }
+                }
+            } 
+            else {
+                // add
+                var new_id_num = 0;
+                for(var i=0; i<data.length; i++) {
+                    var text_num = data[i]["PartID"].slice(1,data[i]["PartID"].length);                
+                    text_num = text_num.padStart(4,"0");
+                    var old_id_num = parseInt(text_num);
+                    if(old_id_num > new_id_num) new_id_num = old_id_num;
+                }                
+                new_id_num++;
+                var new_id_txt= new_id_num.toString();        
+                var new_id = "P" + new_id_txt.padStart(4,"0");
+                PartId.value =  new_id;
+            }
+
+        }).catch(err => {
+            alert (err);
+        });
+        // alert (search);
+        
+        
+    </script>
+
 
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

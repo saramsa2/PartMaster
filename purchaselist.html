@@ -11,23 +11,106 @@
         <div class="row">
             <div class="col-11"></div>
             <div class="col-1 justify-content-center">
-                <a href="newpurchase.html"><input type="button" value="New purchase"></a>
+                <a href="newpurchase.html"><input type="button" class="btn btn-info" value="New purchase"></a>
             </div>
         </div>
     </div>
     
-    <table class="table">
-        <tr>
-            <td>Order No.</td>
-            <td>Supplier</td>
-            <td>Part Name</td>
-            <td>Quantity</td>
-            <td>Unit Price</td>
-            <td>Total Price</td>
-            <td>Order Date</td>
-            <td>Recieved</td>           
-        </tr>
-    </table>  
+    <table class="table" id="stock_table"></table>
+
+
+    <script type="text/javascript">
+        const purchaseUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/purchase';
+        var table = document.getElementById("stock_table");
+        fetch(purchaseUrl).then(response => {
+            return response.json();
+        }).then(data => {
+            data.sort(function(a, b) {
+                return a.PurchaseID > b.PurchaseID ? -1 : a.PurchaseID < b.PurchaseID ? 1 : 0;
+            })
+            for(var i=0; i<data.length; i++) {
+                var row = table.insertRow(i);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+                var cell5 = row.insertCell(4);
+                var cell6 = row.insertCell(5);
+                cell1.innerHTML = data[i]["PurchaseID"];
+                cell2.innerHTML = data[i]["Supplier"];
+                cell3.innerHTML = data[i]["PartID"];
+                cell4.innerHTML = data[i]["Quantity"];
+                cell5.innerHTML = data[i]["OrderDate"];
+
+                if(data[i]["Received"] == true) {                  
+                    cell6.innerHTML = "Done";
+                } else {
+                    var buttonReceived = document.createElement("button");
+                    var cname = "btreceive" + data[i]["PurchaseID"];
+                    buttonReceived.setAttribute("id", cname);                    
+                    buttonReceived.setAttribute("value", data[i]["PurchaseID"]);
+                    buttonReceived.setAttribute("class", "btn btn-success");
+                    buttonReceived.innerHTML = "received";
+                    buttonReceived.addEventListener("click", function() {receivedPO(this.value)});
+                    buttonReceived.style.margin="3px";
+                    cell6.appendChild(buttonReceived);
+                }
+                
+            }
+            var row = table.insertRow(0);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+            var cell6 = row.insertCell(5);
+            cell1.innerHTML = "PurchaseID";            
+            cell2.innerHTML = "Supplier";
+            cell3.innerHTML = "PartID";
+            cell4.innerHTML = "Quantity";
+            cell5.innerHTML = "OrderDate";
+            cell6.innerHTML = "Satus";
+            cell1.style.font = "large bolder"
+            cell2.style.font = "large bolder"
+            cell3.style.font = "large bolder"
+            cell4.style.font = "large bolder"
+            cell5.style.font = "large bolder"
+            cell6.style.font = "large bolder"
+
+        }).catch(err => {
+            // Do something for an error here
+        });
+
+        function updatePart(my_url) {
+            window.location.href = my_url;
+        }
+
+        function deletePart(purchase_id) {
+            deleteUrl = purchaseUrl+"/"+purchase_id;                       
+            fetch(deleteUrl, { method: 'DELETE' })
+            .then(response => {alert("deleted");window.location.reload();})
+            .catch(err => alert(err));
+        }
+
+        function receivedPO(purchaseId) {
+            debugger
+            receiveUrl = purchaseUrl+"/"+purchaseId;                       
+            fetch(receiveUrl, { method: 'PUT' })
+            .then(response => {
+                alert("Recieved");
+                // const partUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/28-OCT-2022/parts';                
+                // fetch(partUrl).then(response => {
+                //     return response.json();
+                // }).then(data => {
+
+
+
+                window.parent.location.reload();
+            })
+            .catch(err => alert(err));            
+        }
+    </script>
+
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
 integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"

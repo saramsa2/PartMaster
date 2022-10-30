@@ -6,19 +6,193 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 </head>
-<body>      
-    <table class="table">
-        <tr>
-            <td>Order No.</td>
-            <td>Client Name</td>
-            <td>Part Name</td>
-            <td>Quantity</td>
-            <td>Unit Price</td>
-            <td>Total Price</td>
-            <td>Order Date</td>
-            <td>Status</td>           
-        </tr>
-    </table> 
+<body>
+    <div class="container">
+        <div class="col "></div>
+        <div class="col-12">
+            <table class="table" id="client_order_table"></table>
+        </div>
+        <div class="col "></div>
+        
+    </div>
+    
+
+    <script type="text/javascript">         
+        const clientUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/client';
+        const orderUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/order';
+        
+        if(localStorage.getItem('username') != null) {
+            const clientOrderUrl = clientUrl +"/"+localStorage.getItem('username');
+            var table = document.getElementById("client_order_table");
+            fetch(clientOrderUrl).then(response => {
+                return response.json();
+            }).then(data => {
+                data.sort(function(a, b) {
+                    return a.OrderID > b.OrderID ? -1 : a.OrderID < b.OrderID ? 1 : 0;
+                })
+                for(var i=0; i<data.length; i++) {
+                    var row = table.insertRow(i);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    var cell4 = row.insertCell(3);
+                    var cell5 = row.insertCell(4);
+                    var cell6 = row.insertCell(5);
+                    var cell7 = row.insertCell(6);
+                    var cell8 = row.insertCell(7);
+                    var cell9 = row.insertCell(8);
+                    var cell10 = row.insertCell(9);
+
+                    cell1.innerHTML = data[i]["OrderID"];
+                    cname = "c1" + data[i]["OrderID"];
+                    cell1.setAttribute("id",cname);
+                    cell2.innerHTML = data[i]["PartID"];
+                    cname = "c2" + data[i]["OrderID"];
+                    cell2.setAttribute("id",cname);
+                    cell3.innerHTML = data[i]["PartName"];
+                    cname = "c3" + data[i]["OrderID"];
+                    cell3.setAttribute("id",cname);
+                    // cell4.innerHTML = data[i]["Quantity"];
+                    cell5.innerHTML = data[i]["UnitPrice"];
+                    cname = "c5" + data[i]["OrderID"];
+                    cell5.setAttribute("id",cname);
+                    cell6.innerHTML = data[i]["TotalPrice"];
+                    cname = "c6" + data[i]["OrderID"];
+                    cell6.setAttribute("id",cname);
+                    cell7.innerHTML = data[i]["OrderDate"];
+                    cname = "c7" + data[i]["OrderID"];
+                    cell7.setAttribute("id",cname);
+                    cell8.innerHTML = data[i]["Status"];                    
+                    cname = "c8" + data[i]["OrderID"];
+                    cell8.setAttribute("id",cname);
+
+                    var inputBox = document.createElement("input");
+                    cname = "input" + data[i]["OrderID"];
+                    inputBox.setAttribute("id", cname);
+                    // inputBox.setAttribute("value", cname);
+                    inputBox.setAttribute("type", 'number');
+                    inputBox.value = data[i]["Quantity"];
+                    inputBox.style.margin="3px";
+                    if(data[i]["Status"] != "Ordered"){
+                        inputBox.setAttribute("disabled", true);
+                    }
+                    cell4.appendChild(inputBox);
+
+                    var buttonUpdate = document.createElement("button");
+                    cname = "update" + data[i]["OrderID"];
+                    buttonUpdate.setAttribute("id", cname);                                   
+                    buttonUpdate.setAttribute("value", data[i]["OrderID"]);
+                    buttonUpdate.setAttribute("class", "btn btn-success");                   
+                    buttonUpdate.innerHTML = "Update";
+                    if(data[i]["Status"] != "Ordered"){
+                        buttonUpdate.setAttribute("disabled", true);                   
+                                     
+                    }
+                    buttonUpdate.addEventListener("click", function() {orderUpdate(this.value)});
+                    
+                    buttonUpdate.style.margin="3px";
+                    cell9.appendChild(buttonUpdate);
+
+                    var buttonCancel = document.createElement("button");
+                    cname = "cancel" + data[i]["OrderID"];
+                    buttonCancel.setAttribute("id", cname);                                   
+                    buttonCancel.setAttribute("value", data[i]["OrderID"]);
+                    buttonCancel.setAttribute("class", "btn btn-success");                   
+                    buttonCancel.innerHTML = "Cancel";
+                    if(data[i]["Status"] != "Ordered"){
+                        buttonCancel.setAttribute("disabled", true); 
+                        
+                    }
+                    buttonCancel.addEventListener("click", function() {cancelOrder(this.value)});
+                    buttonCancel.style.margin="3px";
+                    cell9.appendChild(buttonCancel);
+                    
+                }
+                var row = table.insertRow(0);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+                var cell5 = row.insertCell(4);
+                var cell6 = row.insertCell(5);
+                var cell7 = row.insertCell(6);
+                var cell8 = row.insertCell(7);
+                cell1.innerHTML = "Order ID";
+                cell2.innerHTML = "Part ID";
+                cell3.innerHTML = "Part Name";
+                cell4.innerHTML = "Quantity";
+                cell5.innerHTML = "Unit Price";
+                cell6.innerHTML = "Total Price";
+                cell7.innerHTML = "Order Date";
+                cell8.innerHTML = "Status";
+                cell1.style.font = "large bolder"
+                cell2.style.font = "large bolder"
+                cell3.style.font = "large bolder"
+                cell4.style.font = "large bolder"
+                cell5.style.font = "large bolder"
+                cell6.style.font = "large bolder"
+                cell7.style.font = "large bolder"
+                cell8.style.font = "large bolder"            
+
+            }).catch(err => {
+                // Do something for an error here
+            });
+        }
+        
+        function orderUpdate(order_id) {  
+            debugger          
+            c2Id = "c2"+order_id;
+            c3Id = "c3"+order_id;
+
+            c5Id = "c5"+order_id;
+            c6Id = "c6"+order_id;
+            c7Id = "c7"+order_id;
+            c8Id = "c8"+order_id;
+
+            PartID = document.getElementById(c2Id).innerHTML;
+            PartName = document.getElementById(c3Id).innerHTML;
+
+            UnitPrice = document.getElementById(c5Id).innerHTML;
+            TotalPrice = document.getElementById(c6Id).innerHTML;
+            OrderDate = document.getElementById(c7Id).innerHTML;
+            Status = document.getElementById(c8Id).innerHTML;
+
+            inputBox = document.getElementById("input"+order_id);
+
+            var bodyPost = {                
+                "OrderID": order_id,
+                "ClientID": localStorage.getItem("username"),
+                "PartID": PartID,
+                "PartName": PartName,
+                "Quantity": inputBox.value,
+                "UnitPrice": UnitPrice,
+                "TotalPrice": TotalPrice,
+                "OrderDate": OrderDate,
+                "Status": Status
+            }
+            debugger
+            fetch(orderUrl, { 
+                method: 'POST',
+                body: JSON.stringify(bodyPost), 
+            })
+            .then(response => {
+                alert("updated");
+                window.location.reload;
+            })
+            .catch(err => alert(err));
+
+            
+        }
+
+        function cancelOrder(order_id) {
+            deleteUrl = orderUrl+"/"+order_id;                 
+            fetch(deleteUrl, { method: 'DELETE' })
+            .then(response => {alert("Order is canceled");window.location.reload();})
+            .catch(err => alert(err));
+        }
+        
+    </script>
+
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
 integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"

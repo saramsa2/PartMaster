@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col-11"></div>
             <div class="col-1 justify-content-center">
-                <a href="newpart.html"><input type="button" value="New Part"></a>
+                <a href="newpart.html"><input type="button" class="btn btn-info" value="New Part"></a>
             </div>
         </div>
     </div>
@@ -19,11 +19,14 @@
     <table class="table" id="stock_table"></table>
 
     <script type="text/javascript">
-        const apiUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/28-OCT-2022/parts';
+        const partUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/28-OCT-2022/parts';
         var table = document.getElementById("stock_table");
-        fetch(apiUrl).then(response => {
+        fetch(partUrl).then(response => {
             return response.json();
         }).then(data => {
+            data.sort(function(a, b) {
+                return a.PartID < b.PartID ? -1 : a.PartID > b.PartID ? 1 : 0;
+            })
             for(var i=0; i<data.length; i++) {
                 var row = table.insertRow(i);
                 var cell1 = row.insertCell(0);
@@ -50,9 +53,11 @@
                 cname = "btUpdate" + data[i]["PartID"];
                 buttonUpdate.setAttribute("id", cname);                   
                 var update_url = "newpart.html?data=" + data[i]["PartID"];                
-                buttonUpdate.setAttribute("value", update_url);                   
+                buttonUpdate.setAttribute("value", update_url);
+                buttonUpdate.setAttribute("class", "btn btn-success");                   
                 buttonUpdate.innerHTML = "Update";
                 buttonUpdate.addEventListener("click", function() {updatePart(this.value)});
+                buttonUpdate.style.margin="3px";
                 cell9.appendChild(buttonUpdate);
                 
                 var buttonDelete = document.createElement("button");
@@ -60,8 +65,10 @@
                 buttonUpdate.setAttribute("id", cname);                   
                 var DeletePartId = data[i]["PartID"];                
                 buttonDelete.setAttribute("value", DeletePartId);
+                buttonDelete.setAttribute("class", "btn btn-success");
                 buttonDelete.innerHTML = "Delete";
                 buttonDelete.addEventListener("click", function() {deletePart(this.value)});
+                buttonDelete.style.margin="3px";
                 cell9.appendChild(buttonDelete);
             }
             var row = table.insertRow(0);
@@ -81,6 +88,14 @@
             cell6.innerHTML = "UnitPrice";
             cell7.innerHTML = "MinimumQty";
             cell8.innerHTML = "OrderQty";
+            cell1.style.font = "large bolder"
+            cell2.style.font = "large bolder"
+            cell3.style.font = "large bolder"
+            cell4.style.font = "large bolder"
+            cell5.style.font = "large bolder"
+            cell6.style.font = "large bolder"
+            cell7.style.font = "large bolder"
+            cell8.style.font = "large bolder"
 
             
 
@@ -93,12 +108,15 @@
         }
 
         function deletePart(part_id) {
-            debugger;
-            deleteUrl = apiUrl+"/"+part_id;            
+            deleteUrl = partUrl+"/"+part_id;                       
             fetch(deleteUrl, { method: 'DELETE' })
-            .then(response => alert("deleted"))
+            .then(response => {alert("deleted");
+                window.location.reload();
+                debugger
+                $('#manage-purchase', parent.document).get(0).contentDocument.location.reload();
+                // parent.getElementById(manage-purchase).contentDocument.location.reload(true);
+            })
             .catch(err => alert(err));
-            window.location.reload();
         }
     </script>
 

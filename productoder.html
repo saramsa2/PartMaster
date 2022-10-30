@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="col "></div>
+        <div class="col-12">
+            <table class="table" id="order_stock_table"></table>
+        </div>
+        <div class="col "></div>
+        
+    </div>
+    
+
+    <script type="text/javascript">
+        const partUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/parts';
+        const orderUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/order';
+        var table = document.getElementById("order_stock_table");
+        fetch(partUrl).then(response => {
+            return response.json();
+        }).then(data => {
+            data.sort(function(a, b) {
+                return a.PartID < b.PartID ? -1 : a.PartID > b.PartID ? 1 : 0;
+            })
+            for(var i=0; i<data.length; i++) {
+                var row = table.insertRow(i);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+                var cell5 = row.insertCell(4);
+                var cell6 = row.insertCell(5);
+                var cell7 = row.insertCell(6);
+                var cell8 = row.insertCell(7);
+                // var cell9 = row.insertCell(8);
+                // var cell10 = row.insertCell(9);
+
+                cell1.innerHTML = data[i]["PartID"];
+                cell2.innerHTML = data[i]["PartName"];
+                cell3.innerHTML = data[i]["Description"];
+                cell4.innerHTML = data[i]["Supplier"];
+                cell5.innerHTML = data[i]["Quantity"];
+                cname = "qty" + data[i]["PartID"];
+                cell5.setAttribute("id", cname);
+                cell6.innerHTML = data[i]["UnitPrice"];
+                // cell7.innerHTML = data[i]["MinimumQty"];
+                // cell8.innerHTML = data[i]["OrderQty"];
+
+                var inputBox = document.createElement("input");
+                cname = "input" + data[i]["PartID"];
+                inputBox.setAttribute("id", cname);
+                // inputBox.setAttribute("value", cname);
+                inputBox.setAttribute("type", 'number');
+                inputBox.value = 0;
+                inputBox.style.margin="3px";
+                cell7.appendChild(inputBox);
+                
+                var buttonUpdate = document.createElement("button");
+                cname = "btOrder" + data[i]["PartID"];
+                buttonUpdate.setAttribute("id", cname);                                   
+                buttonUpdate.setAttribute("value", data[i]["PartID"]);
+                buttonUpdate.setAttribute("class", "btn btn-success");                   
+                buttonUpdate.innerHTML = "Order";
+                buttonUpdate.addEventListener("click", function() {orderPart(this.value)});
+                buttonUpdate.style.margin="3px";
+                cell7.appendChild(buttonUpdate);
+                
+            }
+            var row = table.insertRow(0);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+            var cell6 = row.insertCell(5);
+            var cell7 = row.insertCell(6);
+            // var cell8 = row.insertCell(7);
+            cell1.innerHTML = "Part ID";
+            cell2.innerHTML = "Part Name";
+            cell3.innerHTML = "Description";
+            cell4.innerHTML = "Supplier";
+            cell5.innerHTML = "Quantity";
+            cell6.innerHTML = "UnitPrice";
+            cell7.innerHTML = "Order quantity";
+            // cell8.innerHTML = "OrderQty";
+            cell1.style.font = "large bolder"
+            cell2.style.font = "large bolder"
+            cell3.style.font = "large bolder"
+            cell4.style.font = "large bolder"
+            cell5.style.font = "large bolder"
+            cell6.style.font = "large bolder"
+            cell7.style.font = "large bolder"
+            // cell8.style.font = "large bolder"   
+            
+            
+            function orderPart(part_id) {     
+                var inputBoxId = "input"+ part_id;
+                var inputBox = document.getElementById(inputBoxId);
+                var orderNum = parseInt(inputBox.value);
+                if (orderNum == 0){
+                    return;
+                }
+
+                var partQtyId = "qty"+ part_id;
+                var partQty = document.getElementById(partQtyId);
+                var partStockQty = parseInt(partQty.innerHTML);
+                if(orderNum > partStockQty) {
+                    alert("You ordered more than stock. Please, check your order qunatity.");
+                } else {
+                    orderPartUrl = partUrl +"/"+ part_id;
+                    fetch(orderPartUrl).then(response => {
+                        return response.json();
+                    }).then(data => {
+                        var totalPriceNum = orderNum * parseInt(data["UnitPrice"]);
+                        var totalPriceTxt = String(totalPriceNum);
+                        var today = new Date();
+                        var OrderDate = String(today.getDay()).padStart(2,"0") +"-"+ String(today.getMonth()).padStart(2,"0") +"-"+ today.getFullYear();
+                        fetch(orderUrl).then(response => {
+                            return response.json();
+                        }).then(data => {
+                            debugger
+                            var newOrderIdNum = 0;
+                            for(var i = 0; i < data.length; i++) {
+                                oldOrderIdNum = parseInt(data[i]["OrderID"].slice(1,data[i]["OrderID"].length));
+                                if(newOrderIdNum < oldOrderIdNum) {                                    
+                                    newOrderIdNum = oldOrderIdNum;
+                                }
+                            }
+                            newOrderIdNum++;
+                            var newOrderIdTxt = "O"+ String(newOrderIdNum).padStart(4,"0");
+        
+                            var bodyPost = {                
+                                "OrderID": newOrderIdTxt,
+                                "ClientID": localStorage.getItem('username'),
+                                "PartID": data["PartID"],
+                                "PartName": data["PartName"],
+                                "Quantity": orderNum,
+                                "UnitPrice": data["UnitPrice"],
+                                "TotalPrice": totalPriceTxt,
+                                "OrderDate": OrderDate,
+                                "Status": "Ordered"
+                            }
+                            fetch(orderUrl, { 
+                                method: 'POST',
+                                body: JSON.stringify(bodyPost), 
+                            })
+                            .then(response => {
+                                alert("Your Order applied.");
+                                inputBox.value = 0;
+                            })
+                            .catch(err => alert(err));
+                        })                                              
+                    })                                        
+                }
+            }
+
+        }).catch(err => {
+            alert(err)
+        });
+
+        
+
+        function deletePart(part_id) {
+            deleteUrl = partUrl+"/"+part_id;                       
+            fetch(deleteUrl, { method: 'DELETE' })
+            .then(response => {alert("deleted");window.location.reload();})
+            .catch(err => alert(err));
+        }
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+
+
+</body>
+</html>

@@ -11,22 +11,128 @@
         <div class="row">
             <div class="col-11"></div>
             <div class="col-1 justify-content-center">
-                <a href="neworder.html"><input type="button" value="New order"></a>
+                <a href="neworder.html"><input type="button" class="btn btn-info" value="New order"></a>
             </div>
         </div>
     </div>    
-    <table class="table">
-        <tr>
-            <td>Order No.</td>
-            <td>Client Name</td>
-            <td>Part Name</td>
-            <td>Quantity</td>
-            <td>Unit Price</td>
-            <td>Total Price</td>
-            <td>Order Date</td>
-            <td>Status</td>           
-        </tr>
-    </table> 
+
+    <table class="table" id="order_table"></table>
+    
+    <script type="text/javascript">
+        const orderUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/order';                          
+        var table = document.getElementById("order_table");
+        fetch(orderUrl).then(response => {
+            return response.json();
+        }).then(data => {
+            data.sort(function(a, b) {
+                return a.OrderID > b.OrderID ? -1 : a.OrderID < b.OrderID ? 1 : 0;
+            })
+            for(var i=0; i<data.length; i++) {
+                var row = table.insertRow(i);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+                var cell5 = row.insertCell(4);
+                var cell6 = row.insertCell(5);
+                var cell7 = row.insertCell(6);
+                var cell8 = row.insertCell(7);
+                var cell9 = row.insertCell(8);
+                cell1.innerHTML = data[i]["OrderID"];
+                cell2.innerHTML = data[i]["ClientID"];
+                cell3.innerHTML = data[i]["PartID"];
+                cell4.innerHTML = data[i]["Quantity"];
+                cell5.innerHTML = data[i]["UnitPrice"];
+                cell6.innerHTML = data[i]["TotalPrice"];
+                cell7.innerHTML = data[i]["OrderDate"];
+                cell8.innerHTML = data[i]["Status"];
+
+                if(data[i]["Status"] == "Ordered") {
+                    var buttonUpdate = document.createElement("button");
+                    var cname = "btUpdate" + data[i]["OrderID"];
+                    buttonUpdate.setAttribute("id", cname);
+                    var update_url = "neworder.html?data=" + data[i]["OrderID"];                
+                    
+                    var buttonSend = document.createElement("button");
+                    var cname = "btSent" + data[i]["OrderID"];
+                    buttonSend.setAttribute("id", cname);
+                    buttonSend.setAttribute("value", data[i]["OrderID"]);
+                    buttonSend.setAttribute("class", "btn btn-success");
+                    buttonSend.innerHTML = "Send";
+                    buttonSend.addEventListener("click", function() {sendOrder(this.value)});
+                    buttonSend.style.margin="3px";
+                    cell9.appendChild(buttonSend);
+
+                    buttonUpdate.setAttribute("value", update_url);
+                    buttonUpdate.setAttribute("class", "btn btn-success");
+                    buttonUpdate.innerHTML = "Update";
+                    buttonUpdate.addEventListener("click", function() {updateOrder(this.value)});
+                    buttonUpdate.style.margin="3px";
+                    cell9.appendChild(buttonUpdate);
+            
+                    var buttonCancel = document.createElement("button");
+                    cname = "btSent" + data[i]["OrderID"];
+                    buttonCancel.setAttribute("id", cname);
+                    buttonCancel.setAttribute("value", data[i]["OrderID"]);
+                    buttonCancel.setAttribute("class", "btn btn-success");
+                    buttonCancel.innerHTML = "Cancel";
+                    buttonCancel.addEventListener("click", function() {cancelOrder(this.value)});
+                    buttonCancel.style.margin="3px";
+                    cell9.appendChild(buttonCancel);
+                }
+                
+            }
+            var row = table.insertRow(0);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+            var cell6 = row.insertCell(5);
+            var cell7 = row.insertCell(6);
+            var cell8 = row.insertCell(7);
+            cell1.innerHTML = "Order ID";            
+            cell2.innerHTML = "Client ID";
+            cell3.innerHTML = "Part ID";
+            cell4.innerHTML = "Quantity";
+            cell5.innerHTML = "Unit Price";
+            cell6.innerHTML = "Total Price";
+            cell7.innerHTML = "Order Date";
+            cell8.innerHTML = "Satus";
+            cell1.style.font = "large bolder col"
+            cell2.style.font = "large bolder col"
+            cell3.style.font = "large bolder col"
+            cell4.style.font = "large bolder col"
+            cell5.style.font = "large bolder col"
+            cell6.style.font = "large bolder col"
+            cell7.style.font = "large bolder col"
+            cell8.style.font = "large bolder col"
+
+        }).catch(err => {
+            alert(err);
+        });
+
+        function sendOrder(order_id) {
+            sendOrderUrl = orderUrl+"/"+order_id;
+            debugger
+            fetch(sendOrderUrl, { method: 'PUT' })
+            .then(response => {alert("Items are sent");
+            window.parent.location.reload();})
+            .catch(err => alert(err));
+        }
+
+        function updateOrder(my_url) {
+            window.location.href = my_url;
+        }        
+
+        function cancelOrder(order_id) {
+            deleteUrl = orderUrl+"/"+order_id;                 
+            fetch(deleteUrl, { method: 'DELETE' })
+            .then(response => {alert("Order is canceled");window.location.reload();})
+            .catch(err => alert(err));
+        }
+        
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
 integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"

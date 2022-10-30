@@ -50,7 +50,7 @@
                 </table>
                 <div class="container">
                     <div class="row">
-                        <div class="col"><input type="button" value="Submit" onclick="submitPart"></div>
+                        <div class="col"><button id="bt_submin_part" onclick="submitPart()">Submit</button></div>                        
                         <div class="col"><a href="managestock.html"><button>Cancel</button></a></div>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
     </div>
 
     <script>        
-        const apiUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/28-OCT-2022/parts';
+        const partUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/28-OCT-2022/parts';
         var search = window.location.search;
 
         var PartId = document.getElementById("part_id");
@@ -74,17 +74,39 @@
         var MinQty = document.getElementById("min_qty");
         var OrderQty = document.getElementById("order_qty");
 
-        
+        const URLSearch = new URLSearchParams(location.search);            
+        var updatePartId = URLSearch.get('data');
+
+        function submitPart() {
+            var bodyPost = {                
+                "PartID": PartId.value,
+                "PartName": PartName.value,
+                "Description": Description.value,
+                "Supplier": Supplier.value,
+                "Quantity": Quantity.value,
+                "UnitPrice": UnitPrice.value,
+                "MinimumQty": MinQty.value,
+                "OrderQty": OrderQty.value
+            }
+            fetch(partUrl, { 
+                method: 'POST',
+                body: JSON.stringify(bodyPost), 
+            })
+            .then(response => {
+                alert("updated");
+                window.parent.location.reload();
+                window.location.href="managestock.html";                
+            })
+            .catch(err => alert(err));
+            
+        }
     
-        fetch(apiUrl).then(response => {
+        fetch(partUrl).then(response => {
             return response.json();
         }).then(data => {
-            debugger
             if(search != ""){
                 // update
-                debugger
-                const URLSearch = new URLSearchParams(location.search);            
-                var updatePartId = URLSearch.get('data');
+                
                 PartId.value =  updatePartId;
                 for(var i=0; i<data.length; i++) {
                     if(updatePartId == data[i]["PartID"]) {
@@ -103,7 +125,6 @@
                 var new_id_num = 0;
                 for(var i=0; i<data.length; i++) {
                     var text_num = data[i]["PartID"].slice(1,data[i]["PartID"].length);                
-                    text_num = text_num.padStart(4,"0");
                     var old_id_num = parseInt(text_num);
                     if(old_id_num > new_id_num) new_id_num = old_id_num;
                 }                
@@ -116,7 +137,7 @@
         }).catch(err => {
             alert (err);
         });
-        // alert (search);
+        
         
         
     </script>

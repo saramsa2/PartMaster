@@ -17,37 +17,45 @@
                 <table class="table">
                     <tr>
                         <td>Order ID :</td>
-                        <td><input type="text" id="order_id" onchange="newPurchase"></td>
+                        <td><input type="text" id="order_id" disabled></td>
+                    </tr>
+                    <tr>
+                        <td>Client ID :</td>
+                        <td><input type="text" id="client_id"></td>
+                    </tr>            
+                    <tr>
+                        <td>Part ID :</td>
+                        <td><input type="text" id="part_id"></td>
                     </tr>
                     <tr>
                         <td>Part Name :</td>
                         <td><input type="text" id="part_name" disabled></td>
-                    </tr>            
-                    <tr>
-                        <td>Order Date :</td>
-                        <td><input type="text" id="order_date" disabled></td>
-                    </tr>
-                    <tr>
-                        <td>Unit Price :</td>
-                        <td><input type="number" id="unit_price" disabled></td>
                     </tr>
                     <tr>
                         <td>Quantity :</td>
                         <td><input type="number" id="quantity"></td>
                     </tr>
                     <tr>
+                        <td>Unit Price :</td>
+                        <td><input type="number" id="unit_price"></td>
+                    </tr>
+                    <tr>
                         <td>Total Price :</td>
                         <td><input type="number" id="total_price"></td>
                     </tr>
                     <tr>
+                        <td>Order Date :</td>
+                        <td><input type="text" id="order_date"></td>
+                    </tr>
+                    <tr>
                         <td>Status :</td>
-                        <td><input type="number" id="status"></td>
+                        <td><input type="text" id="status" disabled></td>
                     </tr>
                 </table>
                 <div class="container">
                     <div class="row">
-                        <div class="col"><input type="button" value="Submit" onclick="submitorder"></div>
-                        <div class="col"><a href="orderlist.html"><input type="button" value="Cancel" onclick="cancelorder"></a></div>
+                        <div class="col"><input type="button" class="btn btn-success" value="Submit" onclick="submitorder()"></div>
+                        <div class="col"><a href="orderlist.html"><input type="button" class="btn btn-success" value="Cancel"></a></div>
                     </div>
                 </div>                
             </div>        
@@ -56,7 +64,89 @@
     </div>
     
 
-    </table>
+    <script>        
+        const orderUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/order';
+        var search = window.location.search;
+
+        var OrderID = document.getElementById("order_id");
+        var ClientID = document.getElementById("client_id");
+        var PartID = document.getElementById("part_id");
+        var PartName = document.getElementById("part_name");
+        var Quantity = document.getElementById("quantity");
+        var UnitPrice = document.getElementById("unit_price");
+        var TotalPrice = document.getElementById("total_price");
+        var OrderDate = document.getElementById("order_date");
+        var Status = document.getElementById("status");
+
+        const URLSearch = new URLSearchParams(location.search);            
+        var updateOrderId = URLSearch.get('data');
+
+        if(search != ""){
+            anOrderUrl = orderUrl +"/"+updateOrderId;
+            fetch(anOrderUrl).then(response => {
+            return response.json();
+            }).then(data => {
+                OrderID.value = updateOrderId;
+                ClientID.value = data["ClientID"];                
+                PartID.value = data["PartID"];        
+                PartName.value = data["PartName"];
+                Quantity.value = data["Quantity"];
+                UnitPrice.value = data["UnitPrice"];
+                TotalPrice.value = data["TotalPrice"];
+                OrderDate.value = data["OrderDate"];
+                Status.value = data["Status"];
+                ClientID.setAttribute("disabled",true);
+                PartID.setAttribute("disabled",true);
+                OrderDate.setAttribute("disabled",true);
+            }).catch(err => {
+                alert (err);
+            });
+        } else {
+            // Add
+            fetch(orderUrl).then(response => {
+                return response.json();
+            }).then(data => {
+                var new_id_num = 0;
+                for(var i=0; i<data.length; i++) {
+                    var text_num = data[i]["OrderID"].slice(1,data[i]["OrderID"].length);                
+                    var old_id_num = parseInt(text_num);
+                    if(old_id_num > new_id_num) new_id_num = old_id_num;
+                }                
+                new_id_num++;
+                var new_id_txt= new_id_num.toString();        
+                var new_id = "P" + new_id_txt.padStart(4,"0");
+                OrderID.value =  new_id;
+            })
+        }
+
+        function submitorder() {            
+            var bodyPost = {                
+                "OrderID": OrderID.value,
+                "ClientID": ClientID.value,
+                "PartID": PartID.value,
+                "PartName": PartName.value,
+                "Quantity": Quantity.value,
+                "UnitPrice": UnitPrice.value,
+                "TotalPrice": TotalPrice.value,
+                "OrderDate": OrderDate.value,
+                "Status": Status.value
+            }
+            fetch(orderUrl, { 
+                method: 'POST',
+                body: JSON.stringify(bodyPost), 
+            })
+            .then(response => {
+                alert("updated");
+                window.location.href="orderlist.html";
+            })
+            .catch(err => alert(err));
+        }
+        
+        
+
+        
+        
+    </script>
 
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

@@ -85,12 +85,19 @@
                     buttonUpdate.setAttribute("id", cname);                                   
                     buttonUpdate.setAttribute("value", data[i]["OrderID"]);
                     buttonUpdate.setAttribute("class", "btn btn-success");                   
-                    buttonUpdate.innerHTML = "Update";
-                    if(data[i]["Status"] != "Ordered"){
-                        buttonUpdate.setAttribute("disabled", true);                   
-                                     
+                    
+                    if(data[i]["Status"] == "Ordered"){   
+                        buttonUpdate.addEventListener("click", function() {orderUpdate(this.value)});                
+                        buttonUpdate.innerHTML = "Update";
+                    } else if(data[i]["Status"] == "Sent"){ 
+                        buttonUpdate.innerHTML = "Recieved";
+                        buttonUpdate.addEventListener("click", function() {orderReceived(this.value)}); 
                     }
-                    buttonUpdate.addEventListener("click", function() {orderUpdate(this.value)});
+                    else {
+                        buttonUpdate.innerHTML = "Done";
+                        buttonUpdate.setAttribute("disabled", true);
+                    }
+                    
                     
                     buttonUpdate.style.margin="3px";
                     cell9.appendChild(buttonUpdate);
@@ -169,6 +176,49 @@
                 "UnitPrice": UnitPrice,
                 "TotalPrice": TotalPrice,
                 "OrderDate": OrderDate,
+                "Status": "Recieved"
+            }
+            fetch(orderUrl, { 
+                method: 'POST',
+                body: JSON.stringify(bodyPost), 
+            })
+            .then(response => {
+                alert("updated");
+                window.location.reload;
+            })
+            .catch(err => alert(err));
+        }
+
+
+
+        function orderUpdate(order_id) {
+            c2Id = "c2"+order_id;
+            c3Id = "c3"+order_id;
+
+            c5Id = "c5"+order_id;
+            c6Id = "c6"+order_id;
+            c7Id = "c7"+order_id;
+            c8Id = "c8"+order_id;
+
+            PartID = document.getElementById(c2Id).innerHTML;
+            PartName = document.getElementById(c3Id).innerHTML;
+
+            UnitPrice = document.getElementById(c5Id).innerHTML;
+            TotalPrice = document.getElementById(c6Id).innerHTML;
+            OrderDate = document.getElementById(c7Id).innerHTML;
+            Status = document.getElementById(c8Id).innerHTML;
+
+            inputBox = document.getElementById("input"+order_id);
+
+            var bodyPost = {                
+                "OrderID": order_id,
+                "ClientID": localStorage.getItem("username"),
+                "PartID": PartID,
+                "PartName": PartName,
+                "Quantity": inputBox.value,
+                "UnitPrice": UnitPrice,
+                "TotalPrice": TotalPrice,
+                "OrderDate": OrderDate,
                 "Status": Status
             }
             fetch(orderUrl, { 
@@ -180,8 +230,6 @@
                 window.location.reload;
             })
             .catch(err => alert(err));
-
-            
         }
 
         function cancelOrder(order_id) {

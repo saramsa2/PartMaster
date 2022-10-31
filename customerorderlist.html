@@ -21,6 +21,8 @@
         const clientUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/client';
         const orderUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/order';
         
+        // localStorage.setItem('username', "user002")
+
         if(localStorage.getItem('username') != null) {
             const clientOrderUrl = clientUrl +"/"+localStorage.getItem('username');
             var table = document.getElementById("client_order_table");
@@ -169,7 +171,6 @@
                 "OrderDate": OrderDate,
                 "Status": Status
             }
-            debugger
             fetch(orderUrl, { 
                 method: 'POST',
                 body: JSON.stringify(bodyPost), 

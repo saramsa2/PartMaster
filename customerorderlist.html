@@ -21,7 +21,7 @@
         const clientUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/client';
         const orderUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/order';
         
-        // localStorage.setItem('username', "user002")
+        localStorage.setItem('username', "user001")
 
         if(localStorage.getItem('username') != null) {
             const clientOrderUrl = clientUrl +"/"+localStorage.getItem('username');
@@ -54,7 +54,6 @@
                     cell3.innerHTML = data[i]["PartName"];
                     cname = "c3" + data[i]["OrderID"];
                     cell3.setAttribute("id",cname);
-                    // cell4.innerHTML = data[i]["Quantity"];
                     cell5.innerHTML = data[i]["UnitPrice"];
                     cname = "c5" + data[i]["OrderID"];
                     cell5.setAttribute("id",cname);
@@ -148,7 +147,7 @@
             });
         }
         
-        function orderUpdate(order_id) {
+        function orderReceived(order_id) {
             c2Id = "c2"+order_id;
             c3Id = "c3"+order_id;
 
@@ -178,13 +177,15 @@
                 "OrderDate": OrderDate,
                 "Status": "Recieved"
             }
+            debugger
             fetch(orderUrl, { 
                 method: 'POST',
                 body: JSON.stringify(bodyPost), 
             })
             .then(response => {
+                debugger
                 alert("updated");
-                window.location.reload;
+                window.location.reload();
             })
             .catch(err => alert(err));
         }

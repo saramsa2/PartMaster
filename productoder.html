@@ -36,7 +36,7 @@
                 var cell5 = row.insertCell(4);
                 var cell6 = row.insertCell(5);
                 var cell7 = row.insertCell(6);
-                var cell8 = row.insertCell(7);
+                // var cell8 = row.insertCell(7);
                 // var cell9 = row.insertCell(8);
                 // var cell10 = row.insertCell(9);
 
@@ -78,7 +78,7 @@
             var cell4 = row.insertCell(3);
             var cell5 = row.insertCell(4);
             var cell6 = row.insertCell(5);
-            var cell7 = row.insertCell(6);
+            // var cell7 = row.insertCell(6);
             // var cell8 = row.insertCell(7);
             cell1.innerHTML = "Part ID";
             cell2.innerHTML = "Part Name";
@@ -115,7 +115,7 @@
                     orderPartUrl = partUrl +"/"+ part_id;
                     fetch(orderPartUrl).then(response => {
                         return response.json();
-                    }).then(data => {
+                    }).then(data_part => {
                         var totalPriceNum = orderNum * parseInt(data["UnitPrice"]);
                         var totalPriceTxt = String(totalPriceNum);
                         var today = new Date();
@@ -123,7 +123,6 @@
                         fetch(orderUrl).then(response => {
                             return response.json();
                         }).then(data => {
-                            debugger
                             var newOrderIdNum = 0;
                             for(var i = 0; i < data.length; i++) {
                                 oldOrderIdNum = parseInt(data[i]["OrderID"].slice(1,data[i]["OrderID"].length));
@@ -133,14 +132,14 @@
                             }
                             newOrderIdNum++;
                             var newOrderIdTxt = "O"+ String(newOrderIdNum).padStart(4,"0");
-        
+                            
                             var bodyPost = {                
                                 "OrderID": newOrderIdTxt,
                                 "ClientID": localStorage.getItem('username'),
-                                "PartID": data["PartID"],
-                                "PartName": data["PartName"],
+                                "PartID": data_part["PartID"],
+                                "PartName": data_part["PartName"],
                                 "Quantity": orderNum,
-                                "UnitPrice": data["UnitPrice"],
+                                "UnitPrice": data_part["UnitPrice"],
                                 "TotalPrice": totalPriceTxt,
                                 "OrderDate": OrderDate,
                                 "Status": "Ordered"
@@ -151,7 +150,7 @@
                             })
                             .then(response => {
                                 alert("Your Order applied.");
-                                inputBox.value = 0;
+                                window.location.reload();
                             })
                             .catch(err => alert(err));
                         })                                              
@@ -168,7 +167,11 @@
         function deletePart(part_id) {
             deleteUrl = partUrl+"/"+part_id;                       
             fetch(deleteUrl, { method: 'DELETE' })
-            .then(response => {alert("deleted");window.location.reload();})
+            .then(response => {
+                alert("deleted");
+                window.location.reload();
+                
+            })
             .catch(err => alert(err));
         }
     </script>

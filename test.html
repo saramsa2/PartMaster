@@ -15,7 +15,18 @@
 </head>
 <body>
 
-  <iframe src="index.html" name="myFrame" style="width: 100%; height:100vh;"></iframe>
+  <p id="test"></p>
+  <script>
+    target = document.getElementById("test");
+    url = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/parts';
+    fetch(url).then(response => {
+      return response.json();
+    }).then(data => {
+      target.innerHTML = data;
+    }).catch(err => {
+      alert(err);
+    })
+  </script>
 </div>
     
     

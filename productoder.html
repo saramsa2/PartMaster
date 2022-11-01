@@ -20,6 +20,7 @@
     <script type="text/javascript">
         const partUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/parts';
         const orderUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/order';
+        var UnitPrice = 0;
         var table = document.getElementById("order_stock_table");
         fetch(partUrl).then(response => {
             return response.json();
@@ -61,9 +62,10 @@
                 cell7.appendChild(inputBox);
                 
                 var buttonUpdate = document.createElement("button");
-                cname = "btOrder" + data[i]["PartID"];
-                buttonUpdate.setAttribute("id", cname);                                   
-                buttonUpdate.setAttribute("value", data[i]["PartID"]);
+                cname = "btOrder" + data[i]["PartID"];            
+                buttonUpdate.setAttribute("id", cname);
+                cname = data[i]["PartID"] +"/"+ data[i]["UnitPrice"];
+                buttonUpdate.setAttribute("value", cname);
                 buttonUpdate.setAttribute("class", "btn btn-success");                   
                 buttonUpdate.innerHTML = "Order";
                 buttonUpdate.addEventListener("click", function() {orderPart(this.value)});
@@ -98,71 +100,76 @@
             // cell8.style.font = "large bolder"   
             
             
-            function orderPart(part_id) {     
-                var inputBoxId = "input"+ part_id;
-                var inputBox = document.getElementById(inputBoxId);
-                var orderNum = parseInt(inputBox.value);
-                if (orderNum == 0){
-                    return;
-                }
-
-                var partQtyId = "qty"+ part_id;
-                var partQty = document.getElementById(partQtyId);
-                var partStockQty = parseInt(partQty.innerHTML);
-                if(orderNum > partStockQty) {
-                    alert("You ordered more than stock. Please, check your order qunatity.");
-                } else {
-                    orderPartUrl = partUrl +"/"+ part_id;
-                    fetch(orderPartUrl).then(response => {
-                        return response.json();
-                    }).then(data_part => {
-                        var totalPriceNum = orderNum * parseInt(data["UnitPrice"]);
-                        var totalPriceTxt = String(totalPriceNum);
-                        var today = new Date();
-                        var OrderDate = String(today.getDay()).padStart(2,"0") +"-"+ String(today.getMonth()).padStart(2,"0") +"-"+ today.getFullYear();
-                        fetch(orderUrl).then(response => {
-                            return response.json();
-                        }).then(data => {
-                            var newOrderIdNum = 0;
-                            for(var i = 0; i < data.length; i++) {
-                                oldOrderIdNum = parseInt(data[i]["OrderID"].slice(1,data[i]["OrderID"].length));
-                                if(newOrderIdNum < oldOrderIdNum) {                                    
-                                    newOrderIdNum = oldOrderIdNum;
-                                }
-                            }
-                            newOrderIdNum++;
-                            var newOrderIdTxt = "O"+ String(newOrderIdNum).padStart(4,"0");
-                            
-                            var bodyPost = {                
-                                "OrderID": newOrderIdTxt,
-                                "ClientID": localStorage.getItem('username'),
-                                "PartID": data_part["PartID"],
-                                "PartName": data_part["PartName"],
-                                "Quantity": orderNum,
-                                "UnitPrice": data_part["UnitPrice"],
-                                "TotalPrice": totalPriceTxt,
-                                "OrderDate": OrderDate,
-                                "Status": "Ordered"
-                            }
-                            fetch(orderUrl, { 
-                                method: 'POST',
-                                body: JSON.stringify(bodyPost), 
-                            })
-                            .then(response => {
-                                alert("Your Order applied.");
-                                window.location.reload();
-                            })
-                            .catch(err => alert(err));
-                        })                                              
-                    })                                        
-                }
-            }
+            
 
         }).catch(err => {
             alert(err)
         });
 
-        
+        function orderPart(para_string) {                 
+            var para_strting_list = para_string.split("/");
+            var part_id = para_strting_list[0];
+            var unit_price = para_strting_list[1];
+            var inputBoxId = "input"+ part_id;
+            var inputBox = document.getElementById(inputBoxId);
+            var orderNum = parseInt(inputBox.value);
+            if (orderNum <= 0){
+                return;
+            }
+
+            var partQtyId = "qty"+ part_id;
+            var partQty = document.getElementById(partQtyId);
+            var partStockQty = parseInt(partQty.innerHTML);
+            if(orderNum > partStockQty) {
+                alert("You ordered more than stock. Please, check your order qunatity.");
+            } else {
+                debugger
+                orderPartUrl = partUrl +"/"+ part_id;                    
+                fetch(orderPartUrl).then(response => {
+                    return response.json();
+                }).then(data_part => {
+                    var totalPriceNum = orderNum * parseInt(unit_price);
+                    var totalPriceTxt = String(totalPriceNum);
+                    var today = new Date();
+                    var OrderDate = String(today.getDay()).padStart(2,"0") +"-"+ String(today.getMonth()).padStart(2,"0") +"-"+ today.getFullYear();
+                    fetch(orderUrl).then(response => {
+                        return response.json();
+                    }).then(data => {
+                        var newOrderIdNum = 0;
+                        for(var i = 0; i < data.length; i++) {
+                            oldOrderIdNum = parseInt(data[i]["OrderID"].slice(1,data[i]["OrderID"].length));
+                            if(newOrderIdNum < oldOrderIdNum) {                                    
+                                newOrderIdNum = oldOrderIdNum;
+                            }
+                        }
+                        debugger
+                        newOrderIdNum++;
+                        var newOrderIdTxt = "O"+ String(newOrderIdNum).padStart(4,"0");
+                        
+                        var bodyPost = {                
+                            "OrderID": newOrderIdTxt,
+                            "ClientID": localStorage.getItem('username'),
+                            "PartID": data_part["PartID"],
+                            "PartName": data_part["PartName"],
+                            "Quantity": orderNum,
+                            "UnitPrice": data_part["UnitPrice"],
+                            "TotalPrice": totalPriceTxt,
+                            "OrderDate": OrderDate,
+                            "Status": "Ordered"
+                        }
+                        fetch(orderUrl, { 
+                            method: 'POST',
+                            body: JSON.stringify(bodyPost), 
+                        })
+                        .then(response => {
+                            alert("Your Order applied.");
+                            window.location.reload();
+                        })
+                        .catch(err => alert(err));
+                    })                                              
+                })                                        
+            }
+        }
 
         function deletePart(part_id) {
             deleteUrl = partUrl+"/"+part_id;                       

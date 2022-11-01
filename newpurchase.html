@@ -63,7 +63,7 @@
 
         debugger
         var today = new Date();
-        OrderDate.value = today.getDate() +"-"+ today.getMonth().toString().padStart(2,"0") +"-"+ today.getFullYear();
+        OrderDate.value = today.getDate() +"-"+ (today.getMonth()+1).toString().padStart(2,"0") +"-"+ today.getFullYear();
         var temp = today.getDate() +"-"+ today.getMonth() +"-"+ today.getFullYear();
         
         setSupplier();

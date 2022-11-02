@@ -45,7 +45,7 @@
 
 <div class="tab-content flex" id="v-pills-tabContent">
 <div class="tab-pane fade show active just" id="stock-tab" role="tabpanel" aria-labelledby="v-pills-home-tab">
-    <iframe src="managestock.html" name="myFrame" style="width: 100%; height:100vh;" id="manage-stock"></iframe>
+    <iframe src="managestock.html" name="myFrame" style="width: 100%; height:100vh;" id="manage_stock"></iframe>
 </div>
 
 <div class="tab-pane fade" id="purchase-tab" role="tabpanel" aria-labelledby="v-pills-profile-tab">
@@ -58,16 +58,19 @@
 </div>
 
 <script>    
-    function reloadStock() {        
-        document.getElementsById("manage-stock").contentWindow.location.reload();
+    function reloadStock() {       
+        iframe = document.getElementById("manage_stock");        
+        iframe.src = iframe.src;
     }
 
     function reloadPurchase() {
-        document.getElementsById("manage-puchase").contentWindow.location.reload();
+        iframe = document.getElementById("manage-puchase");
+        iframe.src = iframe.src;
     }
 
     function reloadOrder() {
-        document.getElementsById("manage-order").contentWindow.location.reload();
+        iframe = document.getElementById("manage-order");
+        iframe.src = iframe.src;
     }
 
     function myLogout() {

@@ -137,13 +137,11 @@
                     }).then(data => {
                         var newOrderIdNum = 0;
                         for(var i = 0; i < data.length; i++) {
-                            debugger
                             oldOrderIdNum = parseInt(data[i]["OrderID"].slice(1,data[i]["OrderID"].length));
                             if(newOrderIdNum < oldOrderIdNum) {                                    
                                 newOrderIdNum = oldOrderIdNum;
                             }
                         }
-                        debugger
                         newOrderIdNum++;
                         var newOrderIdTxt = "O"+ String(newOrderIdNum).padStart(4,"0");
                         
@@ -171,17 +169,6 @@
                 })                                        
             }
         }
-
-        // function deletePart(part_id) {
-        //     deleteUrl = partUrl+"/"+part_id;                       
-        //     fetch(deleteUrl, { method: 'DELETE' })
-        //     .then(response => {
-        //         alert("deleted");
-        //         window.location.reload();
-                
-        //     })
-        //     .catch(err => alert(err));
-        // }
     </script>
 
 

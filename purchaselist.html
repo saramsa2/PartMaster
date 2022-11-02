@@ -98,10 +98,6 @@
             fetch(receiveUrl, { method: 'PUT' })
             .then(response => {
                 alert("Recieved");
-                // const partUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/28-OCT-2022/parts';                
-                // fetch(partUrl).then(response => {
-                //     return response.json();
-                // }).then(data => {
                 window.location.reload();
             })
             .catch(err => alert(err));            

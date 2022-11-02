@@ -117,7 +117,7 @@
             debugger
             fetch(sendOrderUrl, { method: 'PUT' })
             .then(response => {alert("Items are sent");
-            window.parent.location.reload();})
+            window.location.reload();})
             .catch(err => alert(err));
         }
 

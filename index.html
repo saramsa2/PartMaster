@@ -40,8 +40,7 @@
             var apiUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/parts';
             fetch(apiUrl).then(response => {
               return response.json();
-            }).then(data => {
-                  debugger
+            }).then(data => {                  
                     var out ="<table class='table'><tr><th>Part ID</th><th>Name</th><th>Description</th><th>Price($)</th></tr>";
                     for(var i=0; i<data.length; i++) {                  
                       out += "<tr>";
@@ -55,8 +54,7 @@
               document.getElementById("test_id").innerHTML = out;
               console.log(data);
     
-            }).catch(err => {
-                debugger
+            }).catch(err => {                
               alert(err);
             });
         </script>

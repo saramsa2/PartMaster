@@ -23,7 +23,7 @@
             </div>
             <div class="col-1 justify-content-center">
             
-                <a href="https://partmaster.auth.us-west-2.amazoncognito.com/logout?client_id=7getad3g1bktoe2gjh2v9ta585&logout_uri=https://main.d1nu7t6w5xa71y.amplifyapp.com/">
+                <a href="https://partmaster.auth.us-west-2.amazoncognito.com/logout?client_id=7getad3g1bktoe2gjh2v9ta585&logout_uri=https://main.d1nu7t6w5xa71y.amplifyapp.com/" onclick="myLogout()">
                          
                     <img src="images/sign_out.png" style="width: 50px; height: 50px;"><br>Sign out</a>
             </div>
@@ -58,12 +58,14 @@
 </div>
 
 <script>    
-
-
     function reloadStock() {
         debugger
         document.getElementsById("manage-stock").contentWindow.location.reload();
         // window.frames['myFrame'].location.href.reload()
+    }
+
+    function myLogout() {
+        localStorage.removeItem();
     }
 </script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

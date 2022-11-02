@@ -22,7 +22,7 @@
         const orderUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/order';
         var UnitPrice = 0;
         var table = document.getElementById("order_stock_table");
-        localStorage.setItem("username",'user001')
+        
         fetch(partUrl).then(response => {
             return response.json();
         }).then(data => {

@@ -37,10 +37,10 @@
        role="tab" aria-controls="v-pills-home" aria-selected="true"  onclick="reloadStock()">Manage stock</a>
 
     <a class="nav-link col col-lg-2" id="v-pills-profile-tab" data-toggle="pill" href="#purchase-tab"
-       role="tab" aria-controls="v-pills-profile" aria-selected="false">Puchase list</a>
+       role="tab" aria-controls="v-pills-profile" aria-selected="false" onclick="reloadPurchase()" >Puchase list</a>
 
     <a class="nav-link col col-lg-2" id="v-pills-profile-tab" data-toggle="pill" href="#order-list-tab"
-       role="tab" aria-controls="v-pills-profile" aria-selected="false">Customer order list</a>
+       role="tab" aria-controls="v-pills-profile" aria-selected="false" onclick="reloadOrder()">Customer order list</a>
 </nav>
 
 <div class="tab-content flex" id="v-pills-tabContent">
@@ -58,10 +58,16 @@
 </div>
 
 <script>    
-    function reloadStock() {
-        debugger
+    function reloadStock() {        
         document.getElementsById("manage-stock").contentWindow.location.reload();
-        // window.frames['myFrame'].location.href.reload()
+    }
+
+    function reloadPurchase() {
+        document.getElementsById("manage-puchase").contentWindow.location.reload();
+    }
+
+    function reloadOrder() {
+        document.getElementsById("manage-order").contentWindow.location.reload();
     }
 
     function myLogout() {

@@ -12,7 +12,7 @@ $(document).ready(function() {
   //get URL strings
   var paramIndex = pageURL.indexOf("#");
   if (paramIndex === -1) {
-    location.href = 'http://localhost:8000/index.html';
+    location.href = './index.html';
   } else {
     var parameters = pageURL.substring(paramIndex + 1);
 

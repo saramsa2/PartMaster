@@ -49,7 +49,7 @@ $(document).ready(function() {
     
     if(acessTokenJson['cognito:groups'] != null){
       var loginGroup = acessTokenJson['cognito:groups'][0];
-      if (loginGroup.equals('admin')) {
+      if (loginGroup === 'admin') {
         debugger
         location.href = './admin.html';
         localStorage.setItem('loginGroup', 'admin'); // write        

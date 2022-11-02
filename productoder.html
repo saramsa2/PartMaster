@@ -22,6 +22,7 @@
         const orderUrl = 'https://hkrfhunj5a.execute-api.us-west-2.amazonaws.com/default/order';
         var UnitPrice = 0;
         var table = document.getElementById("order_stock_table");
+        localStorage.setItem("username",'user001')
         fetch(partUrl).then(response => {
             return response.json();
         }).then(data => {
@@ -106,7 +107,7 @@
             alert(err)
         });
 
-        function orderPart(para_string) {                 
+        function orderPart(para_string) {              
             var para_strting_list = para_string.split("/");
             var part_id = para_strting_list[0];
             var unit_price = para_strting_list[1];
@@ -123,7 +124,6 @@
             if(orderNum > partStockQty) {
                 alert("You ordered more than stock. Please, check your order qunatity.");
             } else {
-                debugger
                 orderPartUrl = partUrl +"/"+ part_id;                    
                 fetch(orderPartUrl).then(response => {
                     return response.json();
@@ -137,6 +137,7 @@
                     }).then(data => {
                         var newOrderIdNum = 0;
                         for(var i = 0; i < data.length; i++) {
+                            debugger
                             oldOrderIdNum = parseInt(data[i]["OrderID"].slice(1,data[i]["OrderID"].length));
                             if(newOrderIdNum < oldOrderIdNum) {                                    
                                 newOrderIdNum = oldOrderIdNum;
@@ -151,7 +152,7 @@
                             "ClientID": localStorage.getItem('username'),
                             "PartID": data_part["PartID"],
                             "PartName": data_part["PartName"],
-                            "Quantity": orderNum,
+                            "Quantity": orderNum.toString(),
                             "UnitPrice": data_part["UnitPrice"],
                             "TotalPrice": totalPriceTxt,
                             "OrderDate": OrderDate,
@@ -171,16 +172,16 @@
             }
         }
 
-        function deletePart(part_id) {
-            deleteUrl = partUrl+"/"+part_id;                       
-            fetch(deleteUrl, { method: 'DELETE' })
-            .then(response => {
-                alert("deleted");
-                window.location.reload();
+        // function deletePart(part_id) {
+        //     deleteUrl = partUrl+"/"+part_id;                       
+        //     fetch(deleteUrl, { method: 'DELETE' })
+        //     .then(response => {
+        //         alert("deleted");
+        //         window.location.reload();
                 
-            })
-            .catch(err => alert(err));
-        }
+        //     })
+        //     .catch(err => alert(err));
+        // }
     </script>
 
 

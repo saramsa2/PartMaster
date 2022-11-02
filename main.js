@@ -48,10 +48,10 @@ $(document).ready(function() {
     
     if(acessTokenJson['cognito:groups'] != null){
       var loginGroup = acessTokenJson['cognito:groups'][0];
-      if (loginGroup === 'admin') {
+      if (loginGroup.equals('admin')) {
+        debugger
         location.href = './admin.html';
-        localStorage.setItem('loginGroup', 'admin'); // write
-        // location.href = 'https://main.d2ko94hu7zdgoe.amplifyapp.com/manage.html';
+        localStorage.setItem('loginGroup', 'admin'); // write        
       } else {
         
       }
